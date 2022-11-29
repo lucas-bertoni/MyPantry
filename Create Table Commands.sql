@@ -19,15 +19,15 @@ CREATE TABLE IF NOT EXISTS ingredients (
 CREATE TABLE IF NOT EXISTS pantry_ingredients (
   pantry_id BIGINT NOT NULL,
   ingredient_id BIGINT NOT NULL,
-	FOREIGN KEY (pantry_id) REFERENCES pantries,
-	FOREIGN KEY (ingredient_id) REFERENCES ingredients
+  FOREIGN KEY (pantry_id) REFERENCES pantries,
+  FOREIGN KEY (ingredient_id) REFERENCES ingredients
 );
 
 CREATE TABLE IF NOT EXISTS user_pantries (
-	user_id BIGINT NOT NULL,
-	pantry_id BIGINT NOT NULL,
-	FOREIGN KEY (user_id) REFERENCES users,
-	FOREIGN KEY (pantry_id) REFERENCES pantries
+  user_id BIGINT NOT NULL,
+  pantry_id BIGINT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users,
+  FOREIGN KEY (pantry_id) REFERENCES pantries
 );
 
 CREATE TABLE IF NOT EXISTS recipes (
