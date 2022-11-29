@@ -1,4 +1,0 @@
-https://stackoverflow.com/a/70964237
-https://stackoverflow.com/a/66367137
-
-docker exec -it milestone-2-implementation-team-name-postgres-1 psql -U postgres
