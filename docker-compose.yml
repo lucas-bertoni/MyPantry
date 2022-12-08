@@ -1,0 +1,176 @@
+# All written by Lucas Bertoni
+
+version: '3.4'
+
+services:
+  client:
+    image: client
+    build:
+      context: client/react-typescript-app
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
+    links:
+      - authentication
+    networks:
+      - apinet
+
+
+
+  authentication:
+    image: authentication
+    build:
+      context: authentication
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      PROD_POSTGRES_STRING: $PROD_AUTH_POSTGRES_STRING
+      EVENTBUS_PORT: $EVENTBUS_PORT
+      AUTHENTICATION_PORT: $AUTHENTICATION_PORT
+      EVENTLOGGER_PORT: $EVENTLOGGER_PORT
+      SHARE_PORT: $SHARE_PORT
+    ports:
+      - $AUTHENTICATION_PORT:$AUTHENTICATION_PORT
+    restart: on-failure
+    depends_on:
+      - authentication_database
+    networks:
+      - apinet
+
+
+
+  eventbus:
+    image: eventbus
+    build:
+      context: event-bus
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      EVENTBUS_PORT: $EVENTBUS_PORT
+      AUTHENTICATION_PORT: $AUTHENTICATION_PORT
+      EVENTLOGGER_PORT: $EVENTLOGGER_PORT
+      SHARE_PORT: $SHARE_PORT
+    ports:
+      - $EVENTBUS_PORT:$EVENTBUS_PORT
+    restart: on-failure
+    networks:
+      - apinet
+
+
+
+  eventlogger:
+    image: eventlogger
+    build:
+      context: event-logger
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      PROD_POSTGRES_STRING: $PROD_EVNTLGS_POSTGRES_STRING
+      EVENTBUS_PORT: $EVENTBUS_PORT
+      AUTHENTICATION_PORT: $AUTHENTICATION_PORT
+      EVENTLOGGER_PORT: $EVENTLOGGER_PORT
+      SHARE_PORT: $SHARE_PORT
+    ports:
+      - $EVENTLOGGER_PORT:$EVENTLOGGER_PORT
+    restart: on-failure
+    depends_on:
+      - eventlogs_database
+    networks:
+      - apinet
+
+
+
+  share:
+    image: share
+    build:
+      context: share
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      PROD_POSTGRES_STRING: $PROD_SHARE_POSTGRES_STRING
+      EVENTBUS_PORT: $EVENTBUS_PORT
+      AUTHENTICATION_PORT: $AUTHENTICATION_PORT
+      EVENTLOGGER_PORT: $EVENTLOGGER_PORT
+      SHARE_PORT: $SHARE_PORT
+    ports:
+      - $SHARE_PORT:$SHARE_PORT
+    restart: on-failure
+    depends_on:
+      - share_database
+    networks:
+      - apinet
+
+
+
+  authentication_database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgrespw
+      - PGUSER=postgres
+    ports:
+      - 5000:5432
+    volumes:
+      - authentication_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+        test: [ "CMD-SHELL", "pg_isready" ]
+        interval: 15s
+        timeout: 10s
+        retries: 5
+    networks:
+      - apinet
+
+
+
+  eventlogs_database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgrespw
+      - PGUSER=postgres
+    ports:
+      - 5001:5432
+    volumes:
+      - event_logs_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+        test: [ "CMD-SHELL", "pg_isready" ]
+        interval: 15s
+        timeout: 10s
+        retries: 5
+    networks:
+      - apinet
+
+
+
+  share_database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgrespw
+      - PGUSER=postgres
+    ports:
+      - 5002:5432
+    volumes:
+      - share_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+        test: [ "CMD-SHELL", "pg_isready" ]
+        interval: 15s
+        timeout: 10s
+        retries: 5
+    networks:
+      - apinet
+
+
+
+networks:
+  apinet:
+    driver: bridge
+
+
+
+volumes:
+  authentication_data:
+  event_logs_data:
+  share_data:
