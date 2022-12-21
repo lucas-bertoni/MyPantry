@@ -1,0 +1,13 @@
+{
+  "name": "abcdefg",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "docker compose -f \"docker-compose.yml\" up -d --build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
