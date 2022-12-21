@@ -11,7 +11,7 @@ I (Lucas Bertoni) created the following services:
 - Share
 - Some of the client service (the parts which are relevant to the back end services I wrote)
 
-I also got everything working with Docker Compose so the project could be deployed in a containerized environment.
+I also got everything working with Docker Compose so the project can be deployed in a containerized environment.
 
 ## Highlights of this project
 - It uses a microservice based server arcitechture and the services communicate using an event bus (created by me)
